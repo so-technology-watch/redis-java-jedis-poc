@@ -1,1 +1,6 @@
-C:\Users\tsoumbou\workspace\redis\src\main\java\redis\Main.java
+C:\Users\tsoumbou\workspace\redis\src\main\java\org\demo\persistence\CarPersistence.java
+C:\Users\tsoumbou\workspace\redis\src\main\java\org\demo\persistence\impl\redis\CarPersistenceRedis.java
+C:\Users\tsoumbou\workspace\redis\src\main\java\org\demo\data\record\CarRecord.java
+C:\Users\tsoumbou\workspace\redis\src\main\java\org\demo\persistence\impl\redis\commons\ClientProvider.java
+C:\Users\tsoumbou\workspace\redis\src\main\java\org\demo\data\record\Main.java
+C:\Users\tsoumbou\workspace\redis\src\main\java\org\demo\persistence\impl\redis\commons\GenericDAO.java

@@ -1,4 +1,4 @@
-package dao;
+package org.demo.persistence.impl.redis.commons;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -51,10 +51,10 @@ public class ClientProvider {
 
 		// Apache DBCP BasicDataSource
 		String hostname = env.getProperty("redis.hostname");
-		int port = Integer.parseInt(env.getProperty("redis.port"));
-		String password = env.getProperty("redis.password");
-		Jedis jedisClient = new Jedis(hostname,port);
-		jedisClient.auth(password);
+		//int port = Integer.parseInt(env.getProperty("redis.port"));
+		//String password = env.getProperty("redis.password");
+		Jedis jedisClient = new Jedis(hostname);
+		//jedisClient.auth(password);
 		
 		return jedisClient ;
 	}

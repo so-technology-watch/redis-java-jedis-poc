@@ -1,4 +1,4 @@
-package bean;
+package org.demo.data.record;
 
 import java.io.Serializable;
 
@@ -16,7 +16,7 @@ import java.io.Serializable;
  * @author Telosys Tools Generator
  *
  */
-public class Car implements Serializable {
+public class CarRecord implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
@@ -26,13 +26,13 @@ public class Car implements Serializable {
 
 	private Integer driver; // Integer
 
-	public Car(Integer id, String name, Integer driver) {
+	public CarRecord(Integer id, String name, Integer driver) {
 		this.id = id;
 		this.name = name;
 		this.driver = driver;
 	}
 
-	public Car() {
+	public CarRecord() {
 		// TODO Auto-generated constructor stub
 	}
 
@@ -129,7 +129,7 @@ public class Car implements Serializable {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		Car other = (Car) obj;
+		CarRecord other = (CarRecord) obj;
 		if (id != other.id)
 			return false;
 		if (driver != other.driver)
