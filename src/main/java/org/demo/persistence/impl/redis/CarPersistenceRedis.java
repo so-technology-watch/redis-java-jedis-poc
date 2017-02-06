@@ -83,11 +83,8 @@ public class CarPersistenceRedis extends GenericDAO<CarRecord> implements CarPer
 	public CarRecord findById(Integer id) throws JsonParseException, JsonMappingException, IOException {
 		// TODO Auto-generated method stub
 		CarRecord car = newInstanceWithPrimaryKey(id);
-		if (super.doSelect(car)) {
-			return car;
-		} else {
-			return null; // Not found
-		}
+
+		return super.doSelect(car);
 	}
 
 	// ----------------------------------------------------------------------
@@ -115,7 +112,7 @@ public class CarPersistenceRedis extends GenericDAO<CarRecord> implements CarPer
 	 * @throws JsonMappingException
 	 * @throws JsonParseException
 	 */
-	public boolean load(CarRecord car) throws JsonParseException, JsonMappingException, IOException {
+	public CarRecord load(CarRecord car) throws JsonParseException, JsonMappingException, IOException {
 		return super.doSelect(car);
 	}
 
@@ -124,13 +121,12 @@ public class CarPersistenceRedis extends GenericDAO<CarRecord> implements CarPer
 	 * Inserts the given bean in the database
 	 * 
 	 * @param car
-	 * @throws IOException 
-	 * @throws JsonMappingException 
-	 * @throws JsonGenerationException 
+	 * @throws IOException
+	 * @throws JsonMappingException
+	 * @throws JsonGenerationException
 	 */
-	public long insert(CarRecord car) throws JsonGenerationException, JsonMappingException, IOException {
-		super.doInsert(car);
-		return 0L;
+	public String insert(CarRecord car) throws JsonGenerationException, JsonMappingException, IOException {
+		return super.doInsert(car);
 	}
 
 	// ----------------------------------------------------------------------
@@ -141,13 +137,12 @@ public class CarPersistenceRedis extends GenericDAO<CarRecord> implements CarPer
 	 */
 	public CarRecord save(CarRecord car) throws JsonGenerationException, JsonMappingException, IOException {
 		// TODO Auto-generated method stub
-		if ( super.doExists(car) ) {
+		if (super.doExists(car)) {
 			super.doUpdate(car);
-		}
-		else {
+		} else {
 			super.doInsert(car);
 		}
-		return car ;
+		return car;
 	}
 
 	// ----------------------------------------------------------------------
@@ -159,7 +154,7 @@ public class CarPersistenceRedis extends GenericDAO<CarRecord> implements CarPer
 	public boolean update(CarRecord car) throws JsonGenerationException, JsonMappingException, IOException {
 		// TODO Auto-generated method stub
 		String r = super.doUpdate(car);
-		return r.equals("OK") ;
+		return r.equals("OK");
 	}
 
 	// ----------------------------------------------------------------------
@@ -171,7 +166,7 @@ public class CarPersistenceRedis extends GenericDAO<CarRecord> implements CarPer
 	public CarRecord create(CarRecord car) throws JsonGenerationException, JsonMappingException, IOException {
 		// TODO Auto-generated method stub
 		insert(car);
-		return car ;
+		return car;
 	}
 
 	// ----------------------------------------------------------------------
@@ -182,9 +177,9 @@ public class CarPersistenceRedis extends GenericDAO<CarRecord> implements CarPer
 	 */
 	public boolean deleteById(Integer id) {
 		// TODO Auto-generated method stub
-		CarRecord car = newInstanceWithPrimaryKey( id ) ;
+		CarRecord car = newInstanceWithPrimaryKey(id);
 		long r = super.doDelete(car);
-		return r > 0 ;
+		return r > 0;
 	}
 
 	// ----------------------------------------------------------------------
@@ -196,7 +191,7 @@ public class CarPersistenceRedis extends GenericDAO<CarRecord> implements CarPer
 	public boolean delete(CarRecord car) {
 		// TODO Auto-generated method stub
 		long r = super.doDelete(car);
-		return r > 0 ;
+		return r > 0;
 	}
 
 	// ----------------------------------------------------------------------

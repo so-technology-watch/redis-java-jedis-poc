@@ -5,6 +5,7 @@
 package org.demo.persistence.impl.redis.commons;
 
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -14,6 +15,7 @@ import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 
 import redis.clients.jedis.Jedis;
+import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.ScanParams;
 import redis.clients.jedis.ScanResult;
 import redis.clients.jedis.exceptions.JedisException;
@@ -21,7 +23,7 @@ import redis.clients.jedis.exceptions.JedisException;
 /**
  * Generic abstract class for basic JDBC DAO
  * 
- * @author Telosys Tools
+ * @author Terrence
  *
  * @param <T>
  */
@@ -30,14 +32,14 @@ public abstract class GenericDAO<T> {
 	/**
 	 * The DataSource providing the connections
 	 */
-	private final Jedis jedis;
+	private final JedisPool redisPool;
 
 	/**
 	 * Constructor
 	 */
 	protected GenericDAO() {
 		super();
-		this.jedis = ClientProvider.getJedisInstance();
+		this.redisPool = ClientProvider.getJedisInstance();
 	}
 
 	protected abstract T newInstance();
@@ -60,8 +62,21 @@ public abstract class GenericDAO<T> {
 	protected abstract String getSetValuesForId(T bean);
 
 	// -----------------------------------------------------------------------------------------
-	private Jedis getClient() {
-		return jedis;
+	private JedisPool getConnexion() {
+		return redisPool;
+	}
+
+	// -----------------------------------------------------------------------------------------
+	@SuppressWarnings("unused")
+	private void closeConnexion(JedisPool redisPool) {
+		if (redisPool != null) {
+			try {
+				redisPool.destroy();
+				;
+				redisPool = null;
+			} catch (JedisException e) {
+			}
+		}
 	}
 
 	// -----------------------------------------------------------------------------------------
@@ -69,7 +84,7 @@ public abstract class GenericDAO<T> {
 		if (client != null) {
 			try {
 				client.close();
-				;
+				client = null;
 			} catch (JedisException e) {
 			}
 		}
@@ -86,30 +101,26 @@ public abstract class GenericDAO<T> {
 	 * @throws JsonMappingException
 	 * @throws JsonParseException
 	 */
-	protected boolean doSelect(T bean) throws JsonParseException, JsonMappingException, IOException {
 
-		boolean result = false;
+	@SuppressWarnings("unchecked")
+	protected T doSelect(T bean) throws JsonParseException, JsonMappingException, IOException {
 		Jedis jedis = null;
 		ObjectMapper mapper = new ObjectMapper();
 
 		try {
-			jedis = getClient();
+			jedis = getConnexion().getResource();
 			String id = getSetValuesForId(bean);
 			if (jedis.exists(id)) {
 				String beanInJson = jedis.get(id);
-				T res = (T) mapper.readValue(beanInJson, bean.getClass());
-				if (res != null) {
-					result = true;
-				}
-			} else {
-				throw new RuntimeException("this bean doesn't exist");
+				return (T) mapper.readValue(beanInJson, bean.getClass());
+
 			}
 		} catch (JedisException e) {
 			throw new RuntimeException(e);
 		} finally {
 			closeClient(jedis);
 		}
-		return result;
+		return null;
 	}
 
 	// -----------------------------------------------------------------------------------------
@@ -122,6 +133,7 @@ public abstract class GenericDAO<T> {
 	 * @throws JsonParseException
 	 */
 
+	@SuppressWarnings("unchecked")
 	protected List<T> doSelectAll() throws JsonParseException, JsonMappingException, IOException {
 
 		ObjectMapper mapper = new ObjectMapper();
@@ -129,7 +141,7 @@ public abstract class GenericDAO<T> {
 		Jedis jedis = null;
 
 		try {
-			jedis = getClient();
+			jedis = getConnexion().getResource();
 			ScanParams params = new ScanParams();
 			params.match(getSelectAll());
 			ScanResult<String> scanResult = jedis.scan("0", params);
@@ -163,7 +175,7 @@ public abstract class GenericDAO<T> {
 		ObjectMapper mapper = new ObjectMapper();
 		Jedis jedis = null;
 		try {
-			jedis = getClient();
+			jedis = getConnexion().getResource();
 			String id = getSetValuesForId(bean);
 			if (!jedis.exists(id)) {
 				String beanInJson = mapper.writeValueAsString(bean);
@@ -176,7 +188,6 @@ public abstract class GenericDAO<T> {
 		} finally {
 			closeClient(jedis);
 		}
-
 		return result;
 	}
 
@@ -196,9 +207,9 @@ public abstract class GenericDAO<T> {
 		String result = "KO";
 		Jedis jedis = null;
 		try {
-			jedis = getClient();
+			jedis = getConnexion().getResource();
 			String id = getSetValuesForId(bean);
-			if (!jedis.exists(id)) {
+			if (jedis.exists(id)) {
 				String beanInJson = mapper.writeValueAsString(bean);
 				result = jedis.set(id, beanInJson);
 			} else {
@@ -225,7 +236,7 @@ public abstract class GenericDAO<T> {
 		long result = 0;
 		Jedis jedis = null;
 		try {
-			jedis = getClient();
+			jedis = getConnexion().getResource();
 			String id = getSetValuesForId(bean);
 			if (jedis.exists(id)) {
 				result = jedis.del(id);
@@ -250,9 +261,8 @@ public abstract class GenericDAO<T> {
 	protected boolean doExists(T bean) {
 		boolean result = false;
 		Jedis jedis = null;
-
 		try {
-			jedis = getClient();
+			jedis = getConnexion().getResource();
 			String id = getSetValuesForId(bean);
 			result = jedis.exists(id);
 		} catch (JedisException e) {
@@ -274,7 +284,7 @@ public abstract class GenericDAO<T> {
 		int result = 0;
 		Jedis jedis = null;
 		try {
-			jedis = getClient();
+			jedis = getConnexion().getResource();
 			ScanParams params = new ScanParams();
 			params.match(getSelectAll());
 			ScanResult<String> scanResult = jedis.scan("0", params);
