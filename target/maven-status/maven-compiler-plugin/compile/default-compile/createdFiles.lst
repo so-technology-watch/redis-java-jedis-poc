@@ -1,6 +1,0 @@
-org\demo\data\record\Main.class
-org\demo\persistence\impl\redis\commons\GenericDAO.class
-org\demo\persistence\CarPersistence.class
-org\demo\data\record\CarRecord.class
-org\demo\persistence\impl\redis\CarPersistenceRedis.class
-org\demo\persistence\impl\redis\commons\ClientProvider.class
