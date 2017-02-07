@@ -13,6 +13,7 @@ import java.io.Serializable;
  * Can be used both as a "web form" and "persistence record" <br>
  * 
  *
+ * 
  */
 public class CarRecord implements Serializable {
 
@@ -24,8 +25,7 @@ public class CarRecord implements Serializable {
 
 	private Integer driver; // Integer
 
-	public CarRecord(Integer id, String name, Integer driver) {
-		this.id = id;
+	public CarRecord(String name, Integer driver) {
 		this.name = name;
 		this.driver = driver;
 	}

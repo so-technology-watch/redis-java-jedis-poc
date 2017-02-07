@@ -27,6 +27,7 @@ import org.demo.persistence.impl.redis.commons.GenericDAO;
 public class CarPersistenceRedis extends GenericDAO<CarRecord> implements CarPersistence {
 
 	private final static String SELECT_ALL = "car:*";
+	private final static String entity = "car";
 
 	// ----------------------------------------------------------------------
 	/**
@@ -234,6 +235,16 @@ public class CarPersistenceRedis extends GenericDAO<CarRecord> implements CarPer
 	@Override
 	protected String getSelectAll() {
 		return SELECT_ALL;
+	}
+
+	@Override
+	protected String getEntity() {
+		return entity;
+	}
+
+	@Override
+	protected void setBeanId(CarRecord car, long id) {
+		car.setId((int) id);
 	}
 
 }

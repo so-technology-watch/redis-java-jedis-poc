@@ -52,6 +52,13 @@ public abstract class GenericDAO<T> {
 	protected abstract String getSelectAll();
 
 	/**
+	 * Returns the SQL SELECT REQUEST to be used to retrieve all the occurrences
+	 * 
+	 * @return
+	 */
+	protected abstract String getEntity();
+
+	/**
 	 * Populates the bean attributes from the given ResultSet
 	 * 
 	 * @param rs
@@ -176,6 +183,8 @@ public abstract class GenericDAO<T> {
 		Jedis jedis = null;
 		try {
 			jedis = getConnexion().getResource();
+			long nextId = autoIncr();
+			setBeanId(bean, nextId);
 			String id = getSetValuesForId(bean);
 			if (!jedis.exists(id)) {
 				String beanInJson = mapper.writeValueAsString(bean);
@@ -188,6 +197,7 @@ public abstract class GenericDAO<T> {
 		} finally {
 			closeClient(jedis);
 		}
+
 		return result;
 	}
 
@@ -298,4 +308,32 @@ public abstract class GenericDAO<T> {
 		return result;
 	}
 
+	// -----------------------------------------------------------------------------------------
+	/**
+	 * Counts all the occurrences in the table
+	 * 
+	 * @return
+	 */
+	protected long autoIncr() {
+		long result = 1L;
+		Jedis jedis = null;
+		try {
+			jedis = getConnexion().getResource();
+			if (jedis.get(getEntity()) != null) {
+				result = jedis.incr(getEntity());
+				return result;
+			}
+		} catch (JedisException e) {
+			throw new RuntimeException(e);
+		} finally {
+			closeClient(jedis);
+		}
+		jedis.set(getEntity(), "1");
+		return result;
+	}
+
+	protected void setBeanId(T bean, long id) {
+		// TODO Auto-generated method stub
+
+	}
 }
