@@ -11,8 +11,9 @@ public class Main {
 		CarRecord car2 = new CarRecord("terrence", 12);
 
 		CarPersistenceRedis persist = new CarPersistenceRedis();
-
-		System.out.println(persist.findAll());
+		System.out.println(persist.create(car2));
+		// System.out.println(persist.findAll().toArray(new CarRecord[0]).length
+		// == persist.count());
 
 	}
 }

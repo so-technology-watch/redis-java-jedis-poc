@@ -103,7 +103,7 @@ public class CarPersistenceRedis extends GenericDAO<CarRecord> implements CarPer
 	 * 
 	 */
 	public boolean insert(CarRecord car) {
-		return super.doInsert(car);
+		return super.doInsertIncr(car);
 	}
 
 	// ----------------------------------------------------------------------
