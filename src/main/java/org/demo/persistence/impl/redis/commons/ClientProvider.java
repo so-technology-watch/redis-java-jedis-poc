@@ -1,3 +1,4 @@
+
 package org.demo.persistence.impl.redis.commons;
 
 import java.io.IOException;
@@ -6,6 +7,7 @@ import java.util.Properties;
 
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
+import redis.clients.jedis.Protocol;
 
 public class ClientProvider {
 
@@ -13,6 +15,9 @@ public class ClientProvider {
 	 * The properties file containing the Redis configuration
 	 */
 	private final static String REDIS_PROPERTIES_FILE_NAME = "/redis.properties";
+	private final static String PORT = "redis.port";
+	private final static String PASSWORD = "redis.password";
+	private final static String HOST = "redis.hostname";
 
 	/**
 	 * The Jedis instance
@@ -31,18 +36,17 @@ public class ClientProvider {
 	/**
 	 * Returns the Redis properties file name
 	 * 
-	 * @return
+	 * @return name of properties file
 	 */
 	public static String getJdbcPrpertiesFileName() {
 		return REDIS_PROPERTIES_FILE_NAME;
 	}
 
 	/**
-	 * Loads the JDBC properties using the class-path to find the file<br>
+	 * Loads the REDIS properties using the class-path to find the file<br>
 	 * 
 	 * @throws RuntimeException
-	 *             if the properties file cannot be found
-	 * @return
+	 * @return properties file
 	 */
 	public static Properties loadJdbcPropertiesFromClassPath() {
 		return loadPropertiesFromClassPath(REDIS_PROPERTIES_FILE_NAME);
@@ -51,14 +55,19 @@ public class ClientProvider {
 	/**
 	 * Creates a Jedis <br>
 	 * 
-	 * @return
+	 * @return new JedisPool
 	 */
 	private static JedisPool createJedisClient() {
 		Properties env = loadJdbcPropertiesFromClassPath();
-		JedisPool pool = new JedisPool(new JedisPoolConfig(), env.getProperty("redis.hostname"));
-
-		return pool;
-
+		String stringPort = env.getProperty(PORT);
+		String password = env.getProperty(PASSWORD);
+		String host = env.getProperty(HOST);
+		int port = stringPort.isEmpty() ? Protocol.DEFAULT_PORT : Integer.valueOf(stringPort);
+		password = password.equals("") ? null : password;
+		host = host.isEmpty() ? Protocol.DEFAULT_HOST : host;
+		int timeout = Protocol.DEFAULT_TIMEOUT;
+		JedisPoolConfig poolConfig = new JedisPoolConfig();
+		return new JedisPool(poolConfig, host, port, timeout, password);
 	}
 
 	private static Properties loadPropertiesFromClassPath(String fileName) {
