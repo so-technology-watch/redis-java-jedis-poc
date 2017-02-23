@@ -26,11 +26,12 @@ public class CarPersistenceRedis extends GenericDAO<CarRecord> implements CarPer
 	 * make key in a good format
 	 * 
 	 * @param bean;
+	 * @return
 	 * @return key with a good format
 	 */
 	@Override
-	protected String getKey(CarRecord bean) {
-		return "car:" + bean.getId();
+	protected Integer getKey(CarRecord bean) {
+		return bean.getId();
 	}
 
 	/**
