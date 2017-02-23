@@ -1,7 +1,5 @@
 package org.demo.data.record;
 
-import org.demo.persistence.impl.redis.CarPersistenceRedis;
-
 public class Main {
 
 	public static void main(String[] args) {
@@ -10,7 +8,8 @@ public class Main {
 		CarRecord car1 = new CarRecord("terrence", 12);
 		CarRecord car2 = new CarRecord("terrence", 12);
 
-		CarPersistenceRedis persist = new CarPersistenceRedis();
+		// CarPersistenceRedis persist = new CarPersistenceRedis();
+		System.out.println(" ".isEmpty());
 
 	}
 
